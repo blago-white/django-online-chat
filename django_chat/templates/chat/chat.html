@@ -5,8 +5,24 @@
     <title>Chat</title>
 </head>
 <body>
+    Hello, this is chat!
+
     {% for message in messages %}
     <p>{{ message.sender }} say: {{ message.text }}</p>
     {% endfor %}
+
+    <script>
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
+
+        socket.onopen = function(e) {
+          socket.send(JSON.stringify({
+            message: 'Hello from Js'
+          }));
+        };
+
+        socket.onmessage = function(event) {
+          console.log(event);
+        };
+    </script>
 </body>
 </html>
