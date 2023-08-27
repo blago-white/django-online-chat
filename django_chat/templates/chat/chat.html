@@ -6,23 +6,40 @@
 </head>
 <body>
     Hello, this is chat!
-
+    <div id="messages" style="border: 1px solid;">
     {% for message in messages %}
-    <p>{{ message.sender }} say: {{ message.text }}</p>
+        <p>{{ message.sender }} say: {{ message.text }}</p>
     {% endfor %}
+    </div>
+
+    <form onsubmit="sendMessage(event);return false;">
+        <input type="text" id="message-text">
+        <button type="submit">send</button>
+    </form>
 
     <script>
         const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
 
-        socket.onopen = function(e) {
-          socket.send(JSON.stringify({
-            message: 'Hello from Js'
-          }));
+        socket.onmessage = function(event) {
+          fromServer = JSON.parse(event.data);
+          console.log(fromServer);
         };
 
-        socket.onmessage = function(event) {
-          console.log(event);
-        };
+        function sendMessage(event) {
+            socket.send(JSON.stringify({
+                userid: '{{ user.id }}',
+                message: getMessageText()
+            }))
+            document.getElementById('messages').innerHTML += getNewMessageHTML();
+        }
+
+        function getNewMessageHTML() {
+            return '<p>' + '{{ user.username }}' + ' say: ' + getMessageText() + '</p>';
+        }
+
+        function getMessageText() {
+            return document.getElementById('message-text').value
+        }
     </script>
 </body>
 </html>

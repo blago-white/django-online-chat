@@ -1,0 +1,5 @@
+TEST_USER_USERNAME = "test_username"
+
+TEST_NOT_CORRECT_USER_USERNAME = "!@  _-#-(##~` "
+
+TEST_USER_PASSWORD = "qwerty123s123@"

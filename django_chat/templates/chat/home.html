@@ -5,6 +5,10 @@
     <title>Django Online Chat!</title>
 </head>
 <body>
-    <a href="{% url 'chat' %}">Go Chatting!</a>
-</body>
+    <form action="{% url 'signup' %}" method="post">
+        {% csrf_token %}
+        {{ register_form.as_p }}
+        <button type="submit">Go Chatting!</button>
+    </form>
+    <a href="{% url 'login' %}">I have account</a>
 </html>

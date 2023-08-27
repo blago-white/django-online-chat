@@ -1,36 +1,12 @@
-import json
-
 from channels.generic.websocket import AsyncWebsocketConsumer
+
+from .services import messages, consumers_services
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    _MAIN_GROUP_NAME = "main"
-    _TEST_MESSAGE = {
-        "type": "hello_message",
-        "message": "Hello world!"
-    }
-
-    async def connect(self):
-        await self.channel_layer.group_add(
-            self._MAIN_GROUP_NAME,
-            self.channel_name
-        )
-
-        await self.accept()
-
-        await self.channel_layer.group_send(
-            self._MAIN_GROUP_NAME,
-            self._TEST_MESSAGE
-        )
-
     async def receive(self, text_data=None, bytes_data=None):
-        pass
-
-    async def disconnect(self, code):
-        await self.channel_layer.group_discard(
-            self._MAIN_GROUP_NAME,
-            self.channel_name
-        )
-
-    async def hello_message(self, event):
-        await self.send(text_data=self._TEST_MESSAGE["message"])
+        try:
+            userid, message = consumers_services.get_user_message_payload(text_data=text_data)
+            await messages.async_save_message(from_user_id=userid, text=message)
+        except:
+            pass
