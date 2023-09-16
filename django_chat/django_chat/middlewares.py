@@ -8,14 +8,17 @@ from django.urls import reverse_lazy
 
 class UserLoggedInMiddleware:
     _ADMIN_PANEL_URL: str = settings.ADMIN_PANEL_URL
+    _API_URL: str = settings.API_URL
     _CHAT_PAGE_URL: str = reverse_lazy("chat")
     _SIGNUP_URL: str = reverse_lazy("signup")
+
+    _STATELESS_URLS: tuple = _API_URL, _ADMIN_PANEL_URL
 
     def __init__(self, get_response: Callable):
         self._get_response = get_response
 
     def __call__(self, request: ASGIRequest):
-        if request.path.startswith(self._ADMIN_PANEL_URL):
+        if any(request.path.startswith(stateless_url) for stateless_url in self._STATELESS_URLS):
             return self._get_response(request)
 
         try:

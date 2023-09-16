@@ -1,10 +1,17 @@
 from django.core.handlers.asgi import ASGIRequest
 from django.shortcuts import render
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
 
 from users.forms import UserRegistrationForm
 from .services import messages
 
-__all__ = ["home_view", "chat_view"]
+__all__ = ["MessagesAPIView", "home_view", "chat_view"]
+
+
+class MessagesAPIView(ListAPIView):
+    def list(self, request, *args, **kwargs):
+        return Response({"messages": messages.get_chat_messages_values()})
 
 
 def home_view(request: ASGIRequest):

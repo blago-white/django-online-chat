@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'chat',
     'users',
-    'channels'
+    'channels',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -138,4 +139,7 @@ STATIC_ROOT = BASE_DIR / 'static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = "/login/"
+
 ADMIN_PANEL_URL = "/admin/"
+
+API_URL = "/api/"
