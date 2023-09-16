@@ -1,45 +1,136 @@
-<!DOCTYPE html>
+{% extends 'layout.html' %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat</title>
+
+    {% block pagetitle %}Chat{% endblock %}
+
+    {% block customstyles %}
+        .message-send-form {
+            display: flex;
+            justify-content: center;
+            gap: .5em;
+        }
+
+        .messages-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: hidden;
+            padding: 0px;
+        }
+
+        .messages-section-border {
+            position: relative;
+            height: 3vh;
+            width: 100%;
+            background: var(--base-dark-color);
+            z-index: 10;
+        }
+
+        .upper-border {
+            box-shadow: 0px 0px 3em var(--base-dark-color),
+                        0px 0em 3em var(--base-dark-color),
+                        0px 1em 3em var(--base-dark-color),
+                        0px 2em 3em var(--base-dark-color),
+                        0px 3em 5em var(--base-dark-color);
+        }
+
+        .lower-border {
+            box-shadow: 0px 0px 3em var(--base-dark-color),
+                        0px 0px 3em var(--base-dark-color),
+                        0px -1em 3em var(--base-dark-color),
+                        0px -2em 3em var(--base-dark-color),
+                        0px -3em 5em var(--base-dark-color);
+        }
+
+        .message-text {
+            cursor: pointer;
+            font-size: 3.5vh;
+            height: 5vh;
+            min-height: 5vh;
+            transition: all .2s ease;
+        }
+
+        .message-text:hover {
+            transform: scale(1.5);
+        }
+
+        .messages-list {
+            max-height: 32vh;
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-block: 5vh;
+        }
+    {% endblock %}
 </head>
 <body>
-    Hello, this is chat!
-    <div id="messages" style="border: 1px solid;">
-    {% for message in messages %}
-        <p>{{ message.sender }} say: {{ message.text }}</p>
-    {% endfor %}
+    {% block header-text %}Hello, this is chat!{% endblock %}
+    {% block maincontent %}
+    <div id="messages-section"
+         class="payload-element messages-section"
+         style="display: {% if not messages %}none{% else %}initial{% endif %};">
+        <div class="messages-section-border upper-border"></div>
+        <div id="messages" class="messages-list">
+        {% for message in messages %}
+            <div class="message-text" title="{{ message.date }}">{{ message.sender }} : {{ message.text }}</div>
+        {% endfor %}
+        </div>
+        <div class="messages-section-border lower-border"></div>
     </div>
 
-    <form onsubmit="sendMessage(event);return false;">
-        <input type="text" id="message-text">
+    <form class="payload-element message-send-form" onsubmit="sendMessage(event);return false;">
+        <input type="text" id="message-text" placeholder="today nice day!">
         <button type="submit">send</button>
     </form>
+    {% endblock %}
 
+    {% block scripts %}
     <script>
         const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
+        const messagesSection = document.getElementById('messages')
+
+        let messagesExists = {% if messages %}true{% else %}false{% endif %};
 
         socket.onmessage = function(event) {
-          fromServer = JSON.parse(event.data);
-          console.log(fromServer);
+          fromServerData = JSON.parse(event.data);
+
+          onNewMessage();
+
+          messageHTML = getNewMessageHTML(
+            username=fromServerData['username'],
+            text=fromServerData['message']
+          )
+          messagesSection.innerHTML += messageHTML;
         };
 
         function sendMessage(event) {
             socket.send(JSON.stringify({
                 userid: '{{ user.id }}',
+                username: '{{ user.username }}',
                 message: getMessageText()
-            }))
-            document.getElementById('messages').innerHTML += getNewMessageHTML();
+            }));
         }
 
-        function getNewMessageHTML() {
-            return '<p>' + '{{ user.username }}' + ' say: ' + getMessageText() + '</p>';
+        function onNewMessage() {
+            if (!messagesExists) {
+                document.getElementById('messages-section').style.display = "initial"
+                messagesExists = !messagesExists;
+            }
+            document.getElementById('message-text').value = '';
+        }
+
+        function getNewMessageHTML(username, text) {
+            return '<div class="message-text">' + username + ' : ' + text + '</div>';
         }
 
         function getMessageText() {
             return document.getElementById('message-text').value
         }
     </script>
+    {% endblock %}
 </body>
 </html>

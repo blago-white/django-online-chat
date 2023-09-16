@@ -1,0 +1,68 @@
+:root {
+    --base-indent: 2em;
+    --base-border-radius: 1.5em;
+    --base-dark-color: rgb(30, 30, 30);
+    --base-light-color: rgba(131,58,180,1);
+}
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
+body {
+    background-color: var(--base-dark-color);
+    color: var(--base-light-color);
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    gap: var(--base-indent);
+    margin: var(--base-indent);
+    height: calc(100vh - 4em);
+    overflow: hidden;
+}
+
+form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    font-size: 3vh;
+}
+
+input {
+    background-color: transparent;
+    color: var(--base-light-color);
+    text-align: center;
+    border-inline-width: 0px;
+    border-top-width: 0px;
+    border-block-end-width: 3px;
+    border-radius: .1em;
+    border-color: var(--base-light-color);
+    padding: .2em;
+    font-size: 3vh;
+}
+
+button {
+    font-size: 3vh;
+    background-color: transparent;
+    color: var(--base-light-color);
+    border: 0px;
+    border-radius: .5em;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+button:hover {
+    background-color: var(--base-light-color);
+    color: var(--base-dark-color);
+}
+
+.main-header {
+    display: flex;
+    justify-content: center;
+}
+
+.payload-element {
+    border-radius: var(--base-border-radius);
+    border: 2px solid var(--base-light-color);
+    padding: 1em;
+}

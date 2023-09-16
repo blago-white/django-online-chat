@@ -1,11 +1,11 @@
 import asyncio
 
 from asgiref.sync import sync_to_async
-from chat.models import Message
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.handlers.asgi import ASGIRequest
 
+from chat.models import Message
 from . import tests_config
 
 

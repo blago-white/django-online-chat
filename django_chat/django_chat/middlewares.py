@@ -15,15 +15,15 @@ class UserLoggedInMiddleware:
         self._get_response = get_response
 
     def __call__(self, request: ASGIRequest):
+        if request.path.startswith(self._ADMIN_PANEL_URL):
+            return self._get_response(request)
+
         try:
             user_authenticated: bool = request.user.is_authenticated
-        except:
+        except AttributeError:
             user_authenticated: bool = False
 
         path_is_chat_page = request.path == self._CHAT_PAGE_URL
-
-        if request.path == self._ADMIN_PANEL_URL:
-            return self._get_response(request)
 
         if user_authenticated and not path_is_chat_page:
             return HttpResponseRedirect(redirect_to=self._CHAT_PAGE_URL)

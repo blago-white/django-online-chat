@@ -4,7 +4,7 @@ from channels.testing import WebsocketCommunicator
 from django.test import TestCase
 
 from django_chat import tests_utils
-from ..consumers import ChatConsumer
+from ..consumers import ChatMessageConsumer
 
 
 class ChatConsumerTestCase(TestCase):
@@ -27,5 +27,5 @@ class ChatConsumerTestCase(TestCase):
         self.assertTrue(await tests_utils.check_messages_appeared())
 
     async def _start_websocket_connection(self):
-        self._websocket_communicator = WebsocketCommunicator(ChatConsumer.as_asgi(), "/ws/chat/")
+        self._websocket_communicator = WebsocketCommunicator(ChatMessageConsumer.as_asgi(), "/ws/chat/")
         await self._websocket_communicator.connect()

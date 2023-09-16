@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Django Online Chat!</title>
-</head>
-<body>
-    <form action="{% url 'signup' %}" method="post">
+{% extends 'layout.html' %}
+{% block pagetitle %}Django Online Chat!{% endblock %}
+
+{% block header-text %}Sign Up for chatting!{% endblock %}
+
+{% block maincontent %}
+    <form class="payload-element" action="{% url 'signup' %}" method="post">
         {% csrf_token %}
         {{ register_form.as_p }}
         <button type="submit">Go Chatting!</button>
+        <a href="{% url 'login' %}">I have account</a>
     </form>
-    <a href="{% url 'login' %}">I have account</a>
-</html>
+{% endblock %}

@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <form action="{% url 'login' %}" method="post">
+{% extends 'layout.html' %}
+{% block pagetitle %}Log In{% endblock %}
+
+{% block header-text %}Log In for chatting!{% endblock %}
+
+{% block maincontent %}
+    <form class="payload-element" action="{% url 'login' %}" method="post">
         {% csrf_token %}
         {{ login_form.as_p }}
         <button type="submit">Log In</button>
+        <a href="{% url 'signup' %}">I dont have account</a>
     </form>
-    <a href="{% url 'signup' %}">I dont have account</a>
-</body>
-</html>
+{% endblock %}
