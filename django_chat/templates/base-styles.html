@@ -1,23 +1,52 @@
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+@import url('https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&display=swap');
+@import url('https://fonts.cdnfonts.com/css/helvetica-neue-55?styles=30123');
+
 :root {
     --base-indent: 2em;
     --base-border-radius: 1.5em;
-    --base-dark-color: rgb(30, 30, 30);
-    --base-light-color: rgba(131,58,180,1);
+    --base-dark-color: black;
+    --base-light-color: white;
+    --base-darkened-color: rgb(255, 255, 255, .2);
+    --base-lite-darkened-color: rgb(255, 255, 255, .5);
 }
 
 ::-webkit-scrollbar {
     width: 0;
 }
 
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 100;
+  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff");
+}
+
+*::selection {
+  background: var(--base-light-color);
+  color: var(--base-dark-color);
+}
+
+*::-moz-selection {
+  background: var(--base-light-color);
+  color: var(--base-dark-color);
+}
+
+*::-webkit-selection {
+  background: var(--base-light-color);
+  color: var(--base-dark-color);
+}
+
 body {
     background-color: var(--base-dark-color);
     color: var(--base-light-color);
-    font-family: monospace;
+    font-family: "SF Pro Display";
     display: flex;
     flex-direction: column;
     gap: var(--base-indent);
-    margin: var(--base-indent);
-    height: calc(100vh - 4em);
+    margin-inline: var(--base-indent);
+    margin-top: var(--base-indent);
+    margin-bottom: 0;
+    height: 100vh;
     overflow: hidden;
 }
 
@@ -34,7 +63,7 @@ input {
     text-align: center;
     border-inline-width: 0px;
     border-top-width: 0px;
-    border-block-end-width: 3px;
+    border-block-end-width: 0px;
     border-radius: .1em;
     border-color: var(--base-light-color);
     padding: .2em;
@@ -57,12 +86,15 @@ button:hover {
 }
 
 .main-header {
+    position: relative;
     display: flex;
+    height: 100%;
+    align-items: center;
     justify-content: center;
+    letter-spacing: .005em;
+    font-size: 5em;
 }
 
-.payload-element {
-    border-radius: var(--base-border-radius);
-    border: 2px solid var(--base-light-color);
-    padding: 1em;
+.dark-main-text {
+    color: var(--base-darkened-color);
 }

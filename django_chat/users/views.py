@@ -1,42 +1,37 @@
+import json
+
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic import RedirectView, FormView
 from django.core.handlers.asgi import ASGIRequest
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
-from .services import users
+from . import forms
+from .services import users, urls
 
-__all__ = ["signup_view", "login_view"]
-
-
-def signup_view(request: ASGIRequest):
-    try:
-        new_user = users.create_user(post_request=request)
-        login(request=request, user=new_user)
-    except:
-        return HttpResponseRedirect(redirect_to=reverse("home"))
-
-    return HttpResponseRedirect(redirect_to=reverse("chat"))
+__all__ = ["AuthView"]
 
 
-def login_view(request: ASGIRequest):
-    if request.method == "POST":
-        return _process_login_form_view(request=request)
+class AuthView(FormView, RedirectView):
+    form_class = forms.UserRegistrationForm
 
-    return _get_login_form_view(request=request)
+    http_method_names = ["post", "head", "options", "trace"]
 
+    def post(self, request, *args, **kwargs):
+        form: forms.UserRegistrationForm = self.get_form()
 
-def _get_login_form_view(request: ASGIRequest):
-    context = dict(login_form=AuthenticationForm)
+        if form.is_valid():
+            form.save()
+            login(request=request, user=form.instance)
+            return HttpResponseRedirect(redirect_to=reverse("chat"))
 
-    return render(request=request, template_name="users/login.html", context=context)
+        elif (user := users.get_authenticated_user(request)) is not None:
+            login(request=request, user=user)
+            return HttpResponseRedirect(redirect_to=reverse("chat"))
 
+        form_errors = json.loads(form.errors.as_json())
 
-def _process_login_form_view(request: ASGIRequest):
-    user = users.get_authenticated_user(post_request=request)
-
-    if user is not None:
-        login(request=request, user=user)
-        return HttpResponseRedirect(redirect_to=reverse("chat"))
-
-    return _get_login_form_view(request=request)
+        return HttpResponseRedirect(
+            redirect_to=urls.get_auth_failed_url_with_errors(errors=form_errors)
+        )
