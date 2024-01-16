@@ -17,6 +17,14 @@ class MessagesAPIView(ListAPIView):
 def home_view(request: ASGIRequest):
     context = dict(register_form=UserRegistrationForm)
 
+    if form_errors := request.GET.getlist("error"):
+        context.update(errors=form_errors)
+        # for form_error in form_errors:
+        #     context.update(
+        #         {"username_error" if form_error == "username" else
+        #          "password_error": True}
+        #     )
+
     return render(request=request, template_name="chat/home.html", context=context)
 
 

@@ -1,14 +1,15 @@
 @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
 @import url('https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&display=swap');
 @import url('https://fonts.cdnfonts.com/css/helvetica-neue-55?styles=30123');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
 
 :root {
     --base-indent: 2em;
     --base-border-radius: 1.5em;
     --base-dark-color: black;
     --base-light-color: white;
-    --base-darkened-color: rgb(255, 255, 255, .2);
-    --base-lite-darkened-color: rgb(255, 255, 255, .5);
+    --base-darkened-color: rgb(255, 255, 255, .5);
+    --base-lite-darkened-color: dimgrey;
 }
 
 ::-webkit-scrollbar {
@@ -39,7 +40,8 @@
 body {
     background-color: var(--base-dark-color);
     color: var(--base-light-color);
-    font-family: "SF Pro Display";
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
     display: flex;
     flex-direction: column;
     gap: var(--base-indent);
@@ -66,8 +68,30 @@ input {
     border-block-end-width: 0px;
     border-radius: .1em;
     border-color: var(--base-light-color);
-    padding: .2em;
-    font-size: 3vh;
+    padding: unset;
+
+
+    font-size: inherit;
+    font-family: 'sf pro display';
+
+    transition: all .2s ease;
+}
+
+input:focus-visible {
+    outline: 0px;
+}
+
+textarea {
+    border: 0px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    text-align: center;
+
+    transition: all .2s ease;
+}
+
+textarea:focus-visible {
+    outline: 0px;
 }
 
 button {
@@ -75,8 +99,6 @@ button {
     background-color: transparent;
     color: var(--base-light-color);
     border: 0px;
-    border-radius: .5em;
-    cursor: pointer;
     transition: all .2s ease;
 }
 

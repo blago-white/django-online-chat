@@ -15,7 +15,11 @@ class ChatMessageConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         message: dict = json.loads(text_data)
 
+        print(message, '-----')
+
         await consumers_services.save_message(message=message)
+
+        print('---------1121')
 
         await self.channel_layer.group_send(group=self._MAIN_GROUP_NAME,
                                             message=dict(type="chat_message", message=json.dumps(message)))

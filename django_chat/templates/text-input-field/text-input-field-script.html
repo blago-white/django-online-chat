@@ -1,0 +1,62 @@
+<script>
+    let openedFields = [];
+
+    function onClickToField(event, formline, field) {
+        fieldInput = document.getElementById("id_"+field);
+
+        if (openedFields.includes(field)) {
+            fieldInput.focus();
+            return
+        }
+
+        fieldArrow = document.getElementById(field+'-field-arrow');
+        fieldTitle = document.getElementById(field+'-field-title');
+
+        formline.style.gap = ".2em";
+
+        fieldTitle.classList.toggle("field-title-active");
+
+        fieldArrow.style.maxWidth = "1ch";
+        fieldInput.style.maxWidth = "1ch";
+
+        fieldInput.focus();
+
+        addListenerForInput(fieldInput);
+
+        openedFields.push(field);
+    }
+
+    function onInputChange(event) {
+        const input = event.target;
+
+        if (input.maxLength - input.value.length <= 2) {
+            input.style.maxWidth = input.maxlength + 2 + "ch";
+        } else {
+            input.style.maxWidth = input.value.length + 1 + "ch";
+        }
+    }
+
+    function addListenerForInput(input) {
+        input.addEventListener("keypress", onInputChange);
+        input.addEventListener("keydown", onInputChange);
+    }
+
+    function onSubmitForm(event) {
+        document.getElementById("register-form").submit()
+    }
+
+    addEventListener("keypress", function(e) {
+    if(e.which == 13) {
+        onSubmitForm(e)
+    }})
+
+    function disableSpellChecking() {
+        const inputs = document.getElementsByTagName("input");
+
+        for (var index = 0; index < inputs.length; index++) {
+            inputs[index].spellcheck = false;
+        }
+    }
+
+    disableSpellChecking();
+</script>

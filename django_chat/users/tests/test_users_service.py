@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.client import RequestFactory
 
-from django_chat import tests_utils, tests_config
+from common import tests_utils, tests_config
 from ..services import users
 
 

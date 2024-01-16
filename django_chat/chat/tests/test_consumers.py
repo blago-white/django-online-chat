@@ -3,7 +3,7 @@ import json
 from channels.testing import WebsocketCommunicator
 from django.test import TestCase
 
-from django_chat import tests_utils
+from common import tests_utils
 from ..consumers import ChatMessageConsumer
 
 

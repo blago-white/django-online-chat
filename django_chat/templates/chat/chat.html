@@ -6,19 +6,40 @@
 
     {% block pagetitle %}Chat{% endblock %}
 
+    {% block extrahead %}
+        {% include 'text-input-field/text-input-styles.html' %}
+    {% endblock %}
+
     {% block customstyles %}
+        textarea {
+            max-height: 0px;
+            padding: 0px;
+            transition: all .2s ease;
+        }
+
         .message-send-form {
             display: flex;
             justify-content: center;
-            gap: .5em;
+            font-size: 4vh;
+            align-items: flex-end;
         }
 
         .messages-section {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr 1fr;
+            flex-direction: row-reverse;
+            align-items: center;
+            justify-content: space-evenly;
             height: 100%;
             overflow-y: hidden;
             padding: 0px;
+            gap: 1em;
+        }
+
+        button {
+            font-size: 4vh;
+            width: 25%;
         }
 
         .messages-section-border {
@@ -29,35 +50,18 @@
             z-index: 10;
         }
 
-        .upper-border {
-            box-shadow: 0px 0px 3em var(--base-dark-color),
-                        0px 0em 3em var(--base-dark-color),
-                        0px 1em 3em var(--base-dark-color),
-                        0px 2em 3em var(--base-dark-color),
-                        0px 3em 5em var(--base-dark-color);
-        }
-
-        .lower-border {
-            box-shadow: 0px 0px 3em var(--base-dark-color),
-                        0px 0px 3em var(--base-dark-color),
-                        0px -1em 3em var(--base-dark-color),
-                        0px -2em 3em var(--base-dark-color),
-                        0px -3em 5em var(--base-dark-color);
-        }
-
         .message-text {
             cursor: pointer;
-            font-family: system-ui;
-            font-size: 3.5vh;
-            height: 5vh;
+            font-size: 4vh;
+            font-weight: 100;
+            font-family: 'sf pro display';
+            color: gray;
             min-height: 5vh;
             transition: all .2s ease;
         }
 
         .message-text:hover {
-            margin: .5em;
-            transform: scale(1.5);
-            word-spacing: 1ch;
+            color: var(--base-light-color);
         }
 
         .messages-list {
@@ -67,33 +71,79 @@
             flex-direction: column;
             align-items: center;
             padding-block: 5vh;
+            align-items: flex-start;
+        }
+
+        .main-header {
+            height: auto;
+        }
+
+        .field-arrow-static {
+            filter: invert(1) brightness(.5)!important;
+            max-width: 1ch!important;
+        }
+
+        .message-text:hover .field-arrow-static {
+            filter: invert(1) brightness(1)!important;
+            color: var(--base-light-color);
+            max-width: 0ch!important;
+        }
+
+        .message-input {
+            width: 80%;
+            background: transparent;
+            color: var(--base-light-color);
+            font-size: 4vh;
+            max-width: 40vw;
+            outline: 0px!important;
+            text-align: center;
+            margin-inline: auto;
+
+            border-bottom: 1px solid;
+            border-top: 1px solid;
+
+            transition: all .1s ease;
+        }
+
+        .message-send-form:hover .message-input {
+            padding-block: 1em!important;
         }
     {% endblock %}
 </head>
 <body>
-    {% block header-text %}Lets chatting, {{ user.username }}!{% endblock %}
+    {% block header-text %}
+        WELCOME, <span class="dark-main-text">{{ user.username|upper }}</span>
+    {% endblock %}
     {% block maincontent %}
     <div id="messages-section"
          class="payload-element messages-section"
-         style="display: {% if not messages %}none{% else %}initial{% endif %};">
-        <div class="messages-section-border upper-border"></div>
+         style="{% if not messages %}display: none{% endif %};">
+        <form class="payload-element message-send-form"
+              onsubmit="sendMessage(event);return false;">
+<!--            <img src="https://cdn-icons-png.flaticon.com/512/2985/2985150.png"-->
+<!--                 style="width: 10%;margin-left: 35%;margin-right: 35%;aspect-ratio: 1/1;filter: invert(1);">-->
+            <textarea class="message-input" id="message-input"></textarea>
+<!--            <img src="https://cdn-icons-png.flaticon.com/512/2985/2985150.png"-->
+<!--                 style="width: 10%;margin-left: 35%;margin-right: 35%;aspect-ratio: 1/1;filter: invert(1);transform: rotate(180deg);">-->
+        </form>
         <div id="messages" class="messages-list">
         {% for message in messages %}
-            <div class="message-text" title="{{ message.date }}">
-                <b>{{ message.sender }}</b> {{ message.text }}
-            </div>
+            {% include 'chat/sended-message.html' %}
         {% endfor %}
         </div>
-        <div class="messages-section-border lower-border"></div>
     </div>
-
-    <form class="payload-element message-send-form" onsubmit="sendMessage(event);return false;">
-        <input type="text" id="message-text" placeholder="today nice day!">
-        <button type="submit">send</button>
-    </form>
     {% endblock %}
 
     {% block scripts %}
+    {% include 'text-input-field/text-input-field-script.html' with MAXINPUTLENGTH=20 %}
+    <script>
+        addEventListener("keypress", function(e) {
+            console.log(123);
+            if(e.which == 13) {
+                sendMessage(false)
+            }
+        })
+    </script>
     <script>
         const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
         const messagesSection = document.getElementById('messages')
@@ -122,19 +172,73 @@
 
         function onNewMessage() {
             if (!messagesExists) {
-                document.getElementById('messages-section').style.display = "initial"
+<!--                document.getElementById('messages-section').style.display = "flex"-->
                 messagesExists = !messagesExists;
             }
-            document.getElementById('message-text').value = '';
+            document.getElementById('message-input').innerHTML = '';
         }
 
         function getNewMessageHTML(username, text) {
-            return '<div class="message-text">' + username + ' : ' + text + '</div>';
+            return '<div class="message-text" title="">' + username + ' <img src="https://cdn-icons-png.flaticon.com/512/271/271226.png" class="field-arrow field-arrow-static"> ' + text + '</div>'
         }
 
         function getMessageText() {
-            return document.getElementById('message-text').value
+            return document.getElementById('message-input').innerHTML
         }
+    </script>
+    <script>
+        let lastHTML = '';
+
+        function adjustHeight(textarea){
+            var dif = textarea.scrollHeight - textarea.clientHeight;
+
+            if (dif){
+                if (isNaN(parseInt(textarea.style.minHeight))){
+                    console.warn(1);
+                }else{
+                    textarea.style.minHeight = parseInt(textarea.style.minHeight) + dif + "px";
+                    console.log(parseInt(textarea.style.minHeight), '----', dif);
+                }
+            }
+        }
+
+        function checkMaxLength(textarea) {
+            if (parseInt(textarea.innerHTML.length) > 75) {
+                textarea.innerHTML = lastHTML;
+            } else {
+                console.log(lastHTML);
+                lastHTML = textarea.innerHTML;
+            }
+        }
+
+        function onInputChange(event) {
+            adjustHeight(event.target);
+            checkMaxLength(event.target);
+        }
+
+        function addListenerForInput(input) {
+            input.addEventListener("keypress", onInputChange);
+            input.addEventListener("keydown", onInputChange);
+            input.addEventListener("change", onInputChange);
+        }
+
+        addListenerForInput(document.getElementById('message-input'));
+    </script>
+    <script>
+        function expandMessageInput(textarea) {
+            textarea.style.paddingBlock = ".2em"
+
+            textarea.animate([{maxHeight: "1.2em"}], {
+                duration: 1100,
+                fill: "forwards",
+                easing: "cubic-bezier(0.69, 0.03, 0.35, 1)"
+            });
+            setTimeout(() => {
+                textarea.style.minHeight = "1.2em"
+            }, 1100)
+        }
+
+        expandMessageInput(document.getElementById("message-input"))
     </script>
     {% endblock %}
 </body>

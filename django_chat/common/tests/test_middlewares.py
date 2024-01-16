@@ -5,7 +5,7 @@ from django.http.response import HttpResponseRedirect
 from django.test import TestCase
 from django.test.client import RequestFactory
 
-from django_chat import tests_utils
+from common import tests_utils
 from .. import middlewares
 
 

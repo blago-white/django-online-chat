@@ -1,0 +1,39 @@
+<style>
+    input {
+        max-width: 0em;
+        text-align: left;
+    }
+
+    .field-arrow {
+        filter: invert(1);
+        max-width: 0em;
+        transition: all .2s ease;
+    }
+
+    .field-title {
+        color: var(--base-lite-darkened-color);
+        transition: all .2s ease;
+    }
+
+    .field-title:hover {
+        color: var(--base-light-color);
+    }
+
+    .field-title:hover + .field-arrow {
+        max-width: 1ch;
+        margin-inline: .2em;
+    }
+
+    .field-title-active:hover + .field-arrow {
+        margin-inline: 0em;
+    }
+
+    .field-title-active {
+        color: gray;
+    }
+
+    .field-error {
+        color: brown;
+        font-size: 0.6em;
+    }
+</style>

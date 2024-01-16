@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from django_chat import tests_utils
+from common import tests_utils
 from .. import models
 from ..services import messages
 

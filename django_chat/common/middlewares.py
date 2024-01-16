@@ -10,7 +10,7 @@ class UserLoggedInMiddleware:
     _ADMIN_PANEL_URL: str = settings.ADMIN_PANEL_URL
     _API_URL: str = settings.API_URL
     _CHAT_PAGE_URL: str = reverse_lazy("chat")
-    _SIGNUP_URL: str = reverse_lazy("signup")
+    _AUTH_URL: str = reverse_lazy("home")
 
     _STATELESS_URLS: tuple = _API_URL, _ADMIN_PANEL_URL
 
@@ -32,6 +32,6 @@ class UserLoggedInMiddleware:
             return HttpResponseRedirect(redirect_to=self._CHAT_PAGE_URL)
 
         elif not user_authenticated and path_is_chat_page:
-            return HttpResponseRedirect(redirect_to=self._SIGNUP_URL)
+            return HttpResponseRedirect(redirect_to=self._AUTH_URL)
 
         return self._get_response(request)

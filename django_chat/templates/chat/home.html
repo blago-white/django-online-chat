@@ -1,13 +1,46 @@
 {% extends 'layout.html' %}
-{% block pagetitle %}Django Online Chat!{% endblock %}
+{% block pagetitle %}Chat{% endblock %}
 
-{% block header-text %}Sign Up for chatting!{% endblock %}
+{% block extrahead %}
+    {% include 'text-input-field/text-input-styles.html' %}
+{% endblock %}
+
+{% block customstyles %}
+    .register-form-line {
+        display: flex;
+        height: 1.2em;
+        align-items: baseline;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    input:focus-visible {
+        outline: unset;
+    }
+
+    .register-form {
+        position: relative;
+        bottom: 10%;
+        font-size: 4vh;
+    }
+{% endblock %}
+
+{% block header-text %}ONLINE CHAT.<span class="dark-main-text">AUTH</span>{% endblock %}
 
 {% block maincontent %}
-    <form class="payload-element" action="{% url 'signup' %}" method="post">
+    <form class="payload-element register-form" action="{% url 'auth' %}" id="register-form" method="post">
         {% csrf_token %}
-        {{ register_form.as_p }}
-        <button type="submit">Go Chatting!</button>
-        <a href="{% url 'login' %}">I have account</a>
+        {% for field in register_form %}
+            {% if field.name in errors %}
+                <span class="field-error">not correct</span>
+            {% endif %}
+            <div class="register-form-line">
+                {% include 'text-input-field/text-input-field.html' with fieldid=field.name fieldtitle=field.label fieldinput=field %}
+            </div>
+        {% endfor %}
     </form>
+{% endblock %}
+
+{% block scripts %}
+{% include 'text-input-field/text-input-field-script.html' %}
 {% endblock %}

@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://fonts.cdnfonts.com/css/mona-sans" rel="stylesheet">
     <title>{% block pagetitle %}{% endblock %}</title>
     <style>
         {% include 'base-styles.html' %}
         {% block customstyles %}
         {% endblock %}
     </style>
+    {% block extrahead %}
+    {% endblock %}
 </head>
 <body>
-    <header class="main-header payload-element">
-        <span style="font-size: 4em;font-weight: bold;">{% block header-text %}{% endblock %}</span>
-    </header>
+    <main class="main-header payload-element">
+        <span style="font-weight: bold;">{% block header-text %}{% endblock %}</span>
+    </main>
 
     {% block maincontent %}
     {% endblock %}
