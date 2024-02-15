@@ -36,11 +36,4 @@ def get_test_user() -> User:
 
 
 async def check_messages_appeared() -> bool:
-    await asyncio.sleep(.1)
-    return await _async_messages_exists()
-
-
-@sync_to_async
-def _async_messages_exists() -> bool:
-    return Message.objects.all().exists()
-
+    return await Message.objects.acount()

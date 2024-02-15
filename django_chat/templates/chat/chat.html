@@ -19,9 +19,10 @@
 
         .message-send-form {
             display: flex;
+            flex-direction: row;
             justify-content: center;
             font-size: 4vh;
-            align-items: flex-end;
+            align-items: center
         }
 
         .messages-section {
@@ -97,16 +98,33 @@
             max-width: 40vw;
             outline: 0px!important;
             text-align: center;
-            margin-inline: auto;
+            min-height: 2.5em;
+            margin-inline: 1ch;
 
             border-bottom: 1px solid;
-            border-top: 1px solid;
 
             transition: all .1s ease;
         }
 
-        .message-send-form:hover .message-input {
-            padding-block: 1em!important;
+        .submit-btn {
+            width: 2ch;
+            height: 2ch;
+            aspect-ratio: 1/1;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.5);
+        }
+
+        .message-input::before {
+            content: "hello";
+            margin-right: 0.5em;
+            background: white;
         }
     {% endblock %}
 </head>
@@ -116,15 +134,13 @@
     {% endblock %}
     {% block maincontent %}
     <div id="messages-section"
-         class="payload-element messages-section"
-         style="{% if not messages %}display: none{% endif %};">
+         class="payload-element messages-section">
         <form class="payload-element message-send-form"
               onsubmit="sendMessage(event);return false;">
-<!--            <img src="https://cdn-icons-png.flaticon.com/512/2985/2985150.png"-->
-<!--                 style="width: 10%;margin-left: 35%;margin-right: 35%;aspect-ratio: 1/1;filter: invert(1);">-->
             <textarea class="message-input" id="message-input"></textarea>
-<!--            <img src="https://cdn-icons-png.flaticon.com/512/2985/2985150.png"-->
-<!--                 style="width: 10%;margin-left: 35%;margin-right: 35%;aspect-ratio: 1/1;filter: invert(1);transform: rotate(180deg);">-->
+            <button class="submit-btn" onclick="">
+                <img style="height: 70%;cursor: pointer;" src="https://cdn-icons-png.flaticon.com/512/271/271226.png">
+            </button>
         </form>
         <div id="messages" class="messages-list">
         {% for message in messages %}
@@ -138,8 +154,8 @@
     {% include 'text-input-field/text-input-field-script.html' with MAXINPUTLENGTH=20 %}
     <script>
         addEventListener("keypress", function(e) {
-            console.log(123);
             if(e.which == 13) {
+                console.log(123);
                 sendMessage(false)
             }
         })
@@ -151,15 +167,16 @@
         let messagesExists = {% if messages %}true{% else %}false{% endif %};
 
         socket.onmessage = function(event) {
-          fromServerData = JSON.parse(event.data);
+            fromServerData = JSON.parse(event.data);
 
-          onNewMessage();
+            onNewMessage();
 
-          messageHTML = getNewMessageHTML(
-            username=fromServerData['username'],
-            text=fromServerData['message']
-          )
-          messagesSection.innerHTML += messageHTML;
+            messageHTML = getNewMessageHTML(
+              username=fromServerData['username'],
+              text=fromServerData['message']
+            );
+
+            messagesSection.innerHTML += messageHTML;
         };
 
         function sendMessage(event) {
@@ -172,10 +189,9 @@
 
         function onNewMessage() {
             if (!messagesExists) {
-<!--                document.getElementById('messages-section').style.display = "flex"-->
                 messagesExists = !messagesExists;
             }
-            document.getElementById('message-input').innerHTML = '';
+            document.getElementById('message-input').value = '';
         }
 
         function getNewMessageHTML(username, text) {
@@ -183,59 +199,20 @@
         }
 
         function getMessageText() {
-            return document.getElementById('message-input').innerHTML
+            return document.getElementById('message-input').value
         }
-    </script>
-    <script>
-        let lastHTML = '';
-
-        function adjustHeight(textarea){
-            var dif = textarea.scrollHeight - textarea.clientHeight;
-
-            if (dif){
-                if (isNaN(parseInt(textarea.style.minHeight))){
-                    console.warn(1);
-                }else{
-                    textarea.style.minHeight = parseInt(textarea.style.minHeight) + dif + "px";
-                    console.log(parseInt(textarea.style.minHeight), '----', dif);
-                }
-            }
-        }
-
-        function checkMaxLength(textarea) {
-            if (parseInt(textarea.innerHTML.length) > 75) {
-                textarea.innerHTML = lastHTML;
-            } else {
-                console.log(lastHTML);
-                lastHTML = textarea.innerHTML;
-            }
-        }
-
-        function onInputChange(event) {
-            adjustHeight(event.target);
-            checkMaxLength(event.target);
-        }
-
-        function addListenerForInput(input) {
-            input.addEventListener("keypress", onInputChange);
-            input.addEventListener("keydown", onInputChange);
-            input.addEventListener("change", onInputChange);
-        }
-
-        addListenerForInput(document.getElementById('message-input'));
     </script>
     <script>
         function expandMessageInput(textarea) {
-            textarea.style.paddingBlock = ".2em"
+            textarea.style.transform = "scaleX(0)";
 
-            textarea.animate([{maxHeight: "1.2em"}], {
-                duration: 1100,
+            textarea.animate([
+                {transform: "scaleX(1)"}
+            ], {
+                duration: 500,
                 fill: "forwards",
-                easing: "cubic-bezier(0.69, 0.03, 0.35, 1)"
-            });
-            setTimeout(() => {
-                textarea.style.minHeight = "1.2em"
-            }, 1100)
+                easing: "ease-out"
+            })
         }
 
         expandMessageInput(document.getElementById("message-input"))
