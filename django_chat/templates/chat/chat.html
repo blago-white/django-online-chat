@@ -36,6 +36,8 @@
             overflow-y: hidden;
             padding: 0px;
             gap: 1em;
+
+            font-weight: 100;
         }
 
         button {
@@ -58,6 +60,8 @@
             font-family: 'sf pro display';
             color: gray;
             min-height: 5vh;
+            overflow-wrap: anywhere;
+            max-width: 50%;
             transition: all .2s ease;
         }
 
@@ -91,15 +95,14 @@
         }
 
         .message-input {
-            width: 80%;
+            width: 100%;
             background: transparent;
             color: var(--base-light-color);
             font-size: 4vh;
             max-width: 40vw;
             outline: 0px!important;
             text-align: center;
-            min-height: 2.5em;
-            margin-inline: 1ch;
+            min-height: 1.5em;
 
             border-bottom: 1px solid;
 
@@ -126,6 +129,42 @@
             margin-right: 0.5em;
             background: white;
         }
+
+        .message-input-area {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-inline: 1ch;
+        }
+
+        .message-input-area span {
+            font-size: 3vh;
+        }
+
+        .not-highlighted {
+            color: rgb(210, 210, 210);
+        }
+
+        .highlited-count-letters {
+            color: white;
+        }
+
+        .field-arrow-X {
+
+        }
+
+        .message-text:hover .field-arrow-X {
+            filter: invert(1) brightness(.5)!important;
+            max-width: 1ch!important;
+        }
+
+
+        .field-arrow-X {
+            filter: invert(1) brightness(1)!important;
+            color: var(--base-light-color);
+            max-width: 0ch!important;
+        }
     {% endblock %}
 </head>
 <body>
@@ -137,8 +176,11 @@
          class="payload-element messages-section">
         <form class="payload-element message-send-form"
               onsubmit="sendMessage(event);return false;">
-            <textarea class="message-input" id="message-input"></textarea>
-            <button class="submit-btn" onclick="">
+            <div class="message-input-area">
+                <textarea class="message-input" id="message-input" onchange="onInputLetter(event)" oninput="onInputLetter(event)"></textarea>
+                <span><span class="highlited-count-letters" id="count-letters">0</span> / <span class="not-highlighted">70</span></span>
+            </div>
+            <button class="submit-btn" id="submit-btn" onclick="">
                 <img style="height: 70%;cursor: pointer;" src="https://cdn-icons-png.flaticon.com/512/271/271226.png">
             </button>
         </form>
@@ -155,7 +197,6 @@
     <script>
         addEventListener("keypress", function(e) {
             if(e.which == 13) {
-                console.log(123);
                 sendMessage(false)
             }
         })
@@ -167,39 +208,79 @@
         let messagesExists = {% if messages %}true{% else %}false{% endif %};
 
         socket.onmessage = function(event) {
-            fromServerData = JSON.parse(event.data);
+            fromServer = JSON.parse(event.data);
+            fromServerData = fromServer['payload'];
 
             onNewMessage();
 
-            messageHTML = getNewMessageHTML(
-              username=fromServerData['username'],
-              text=fromServerData['message']
-            );
+            console.log(fromServerData);
 
-            messagesSection.innerHTML += messageHTML;
+            if (fromServer["type"] == "create") {
+                messageHTML = getNewMessageHTML(
+                    message_id=fromServerData['message_id'],
+                    username=fromServerData['username'],
+                    text=fromServerData['message']
+                );
+                messagesSection.innerHTML += messageHTML;
+            } else if (fromServer["type"] == "delete") {
+                document.getElementById(fromServerData["message_id"]).style.display = "none";
+            }
         };
 
         function sendMessage(event) {
             socket.send(JSON.stringify({
-                userid: '{{ user.id }}',
-                username: '{{ user.username }}',
-                message: getMessageText()
+                type: 'create',
+                payload: {
+                    userid: '{{ user.id }}',
+                    username: '{{ user.username }}',
+                    message: getMessageText()
+                }
+            }));
+        }
+
+        function deleteMessage(message_id) {
+            socket.send(JSON.stringify({
+                type: 'delete',
+                payload: {
+                    message_id: message_id,
+                }
             }));
         }
 
         function onNewMessage() {
-            if (!messagesExists) {
-                messagesExists = !messagesExists;
-            }
+            messagesExists = true;
             document.getElementById('message-input').value = '';
         }
 
-        function getNewMessageHTML(username, text) {
-            return '<div class="message-text" title="">' + username + ' <img src="https://cdn-icons-png.flaticon.com/512/271/271226.png" class="field-arrow field-arrow-static"> ' + text + '</div>'
+        function addMessage() {
+                messageHTML = getNewMessageHTML(
+                    message_id=fromServerData['message_id'],
+                    username=fromServerData['username'],
+                    text=fromServerData['message']
+                );
+                messagesSection.innerHTML += messageHTML;
+        }
+
+        function getNewMessageHTML(message_id, username, text) {
+            return `
+            <div id=${message_id} class="message-text">
+            <img src="https://cdn-icons-png.flaticon.com/512/151/151882.png" class="field-arrow field-arrow-static field-arrow-X" onclick="deleteMessage(${ message_id });">
+            ${username}
+            <img src="https://cdn-icons-png.flaticon.com/512/271/271226.png" class="field-arrow field-arrow-static"> ${text} </div>
+            `
         }
 
         function getMessageText() {
             return document.getElementById('message-input').value
+        }
+
+        function onInputLetter(event) {
+            inputed = document.getElementById('message-input').value;
+
+            document.getElementById("submit-btn").style = inputed.length > 70 ? "transform: scale(0);" : "";
+
+            document.getElementById("count-letters").style.color = inputed.length > 70 ? "red" : "white";
+            document.getElementById("count-letters").innerHTML = inputed.length;
         }
     </script>
     <script>

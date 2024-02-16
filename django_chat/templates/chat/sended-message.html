@@ -1,4 +1,8 @@
-<div class="message-text" title="{{ message.date }}">
+<div class="message-text" title="{{ message.date }}" id="{{ message.pk }}">
+    <img src="https://cdn-icons-png.flaticon.com/512/151/151882.png"
+         class="field-arrow field-arrow-static field-arrow-X"
+         onclick="deleteMessage({{ message.pk }});"
+    >
     {{ message.sender }} <img src="https://cdn-icons-png.flaticon.com/512/271/271226.png"
                               class="field-arrow field-arrow-static">
     {{ message.text }}
