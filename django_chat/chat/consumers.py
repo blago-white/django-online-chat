@@ -2,7 +2,7 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from .services import consumers
+from .services import consumers, base
 
 
 class MessageTypes:
@@ -12,6 +12,11 @@ class MessageTypes:
 
 class ChatMessageConsumer(AsyncWebsocketConsumer):
     _MAIN_GROUP_NAME = "_"
+    _service: base.BaseService
+
+    def __init__(self, *args, service=consumers.MessageService(), **kwargs):
+        self._service = service
+        super().__init__(*args, **kwargs)
 
     async def connect(self):
         await self.channel_layer.group_add(self._MAIN_GROUP_NAME, self.channel_name)
@@ -21,7 +26,7 @@ class ChatMessageConsumer(AsyncWebsocketConsumer):
         message: dict = json.loads(text_data)
 
         if message.get("type") == MessageTypes.CREATE:
-            saved_message = await consumers.save_message(message=message)
+            saved_message = await self._service.save(message=message)
 
             await self.channel_layer.group_send(group=self._MAIN_GROUP_NAME,
                                                 message=dict(
@@ -30,7 +35,7 @@ class ChatMessageConsumer(AsyncWebsocketConsumer):
                                                 )
 
         elif message.get("type") == MessageTypes.DELETE:
-            deleted = await consumers.delete_message(message=message)
+            deleted = await self._service.delete(message=message)
 
             await self.channel_layer.group_send(group=self._MAIN_GROUP_NAME,
                                                 message=dict(
