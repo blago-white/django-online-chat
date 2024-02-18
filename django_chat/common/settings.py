@@ -34,7 +34,6 @@ MAIN_HOST_NAME = "127.0.0.1:8000"
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'chat',
     'users',
     'channels',
+    'common',
     'rest_framework',
 ]
 
@@ -95,7 +95,7 @@ DATABASES = {
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'PORT': os.environ.get('POSTGRES_PORT'),
-        'HOST': os.environ.get('POSTGRES_HOST') if not DEBUG else None,
+        'HOST': os.environ.get('POSTGRES_HOST'),
     }
 }
 
