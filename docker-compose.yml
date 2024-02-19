@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   db:
-    image: postgres:15-bullseye
+    image: postgres:15-bookworm
     container_name: db
     env_file:
       - .env
@@ -22,11 +22,25 @@ services:
       - "8000:8001"
     depends_on:
       - db
+      - redis
     env_file:
       - .env
     container_name: django
     volumes:
       - ./django_chat/debug.log:/root/chat/django_chat/debug.log
+
+  redis:
+    image: redis:7.2.4-bookworm
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    container_name: redis
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres_data:

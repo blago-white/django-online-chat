@@ -76,12 +76,16 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'common.wsgi.application'
+# WSGI_APPLICATION = 'common.asgi.application'
 ASGI_APPLICATION = 'common.asgi.application'
 
 CHANNEL_LAYERS = {
   'default': {
-    'BACKEND': 'channels.layers.InMemoryChannelLayer'
+      "BACKEND": "channels.layers.InMemoryChannelLayer"
+        # "BACKEND": "channels_redis.core.RedisChannelLayer",
+        # "CONFIG": {
+        #     "hosts": [('localhost', 6379)],
+        # },
   }
 }
 
@@ -95,7 +99,7 @@ DATABASES = {
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'PORT': os.environ.get('POSTGRES_PORT'),
-        'HOST': os.environ.get('POSTGRES_HOST'),
+        # 'HOST': os.environ.get('POSTGRES_HOST'),
     }
 }
 
@@ -112,11 +116,20 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'debug.log',
         },
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
     },
     'loggers': {
         'django.db.backends': {
             'level': 'DEBUG',
             'handlers': ['file'],
+        },
+        'channels_redis.core.RedisChannelLayer': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
         }
     }
 }
