@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1:8000", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 MAIN_HOST_NAME = "127.0.0.1:8000"
 
@@ -80,13 +80,12 @@ TEMPLATES = [
 ASGI_APPLICATION = 'common.asgi.application'
 
 CHANNEL_LAYERS = {
-  'default': {
-      "BACKEND": "channels.layers.InMemoryChannelLayer"
-        # "BACKEND": "channels_redis.core.RedisChannelLayer",
-        # "CONFIG": {
-        #     "hosts": [('localhost', 6379)],
-        # },
-  }
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('redis', 6379)],
+        },
+    }
 }
 
 # Database
@@ -99,7 +98,7 @@ DATABASES = {
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'PORT': os.environ.get('POSTGRES_PORT'),
-        # 'HOST': os.environ.get('POSTGRES_HOST'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
     }
 }
 
