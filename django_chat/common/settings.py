@@ -107,16 +107,16 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console': {
+        'file': {
             'level': 'DEBUG',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-        }
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'debug.log',
+        },
     },
     'loggers': {
         'django.db.backends': {
             'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': ['file'],
         }
     }
 }
