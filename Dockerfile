@@ -15,6 +15,4 @@ RUN pip install -r requirements.txt
 
 WORKDIR /root/chat/django_chat/
 
-EXPOSE 8001
-
 ENTRYPOINT ./start.sh
