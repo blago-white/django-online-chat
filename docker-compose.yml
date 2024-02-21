@@ -27,7 +27,7 @@ services:
       - .env
     container_name: django
     volumes:
-      - ./django_chat/debug.log:/root/chat/django_chat/debug.log
+      - ./django_chat/debug.log:/home/chat/django_chat/debug.log
 
   redis:
     image: redis:7.2.4-bookworm

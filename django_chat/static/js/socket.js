@@ -1,4 +1,4 @@
-const socket = new WebSocket(`ws://${window.location.host}/ws/chat/`);
+const socket = new WebSocket(`ws://localhost/ws/chat/`);
 const messagesSection = document.getElementById('messages')
 
 let messagesExists = messagesSection.innerHTML.length;
