@@ -23,12 +23,12 @@ socket.onmessage = function(event) {
     }
 };
 
-function sendMessage(event) {
+function sendMessage(event, userid, username) {
     socket.send(JSON.stringify({
         type: 'create',
         payload: {
-            userid: '{{ user.id }}',
-            username: '{{ user.username }}',
+            userid: userid,
+            username: username,
             message: getMessageText()
         }
     }));

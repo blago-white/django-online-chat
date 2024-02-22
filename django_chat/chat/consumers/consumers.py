@@ -20,14 +20,20 @@ class ChatMessageConsumer(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
 
     async def connect(self):
+        django_logger.debug(f"Add new channel {self.channel_name}")
+
         await self.channel_layer.group_add(self._MAIN_GROUP_NAME, self.channel_name)
         await super().connect()
 
     async def receive(self, text_data=None, bytes_data=None):
         message: dict = json.loads(text_data)
 
+        django_logger.debug(f"Receive WS message: {message}")
+
         if message.get("type") == MessageType.CREATE.value:
             saved_message = await self._service.save(message=message)
+
+            django_logger.debug(f"Saved message: {message}")
 
             await self.channel_layer.group_send(group=self._MAIN_GROUP_NAME,
                                                 message=dict(
@@ -38,6 +44,8 @@ class ChatMessageConsumer(AsyncWebsocketConsumer):
         elif message.get("type") == MessageType.DELETE.value:
             deleted = await self._service.delete(message=message)
 
+            django_logger.debug(f"Saved message: {message}")
+
             await self.channel_layer.group_send(group=self._MAIN_GROUP_NAME,
                                                 message=dict(
                                                     type="chat_message",
@@ -45,6 +53,8 @@ class ChatMessageConsumer(AsyncWebsocketConsumer):
                                                 )
 
     async def disconnect(self, code):
+        django_logger.debug(f"Disconnect channel: {self.channel_name}")
+
         await self.channel_layer.group_discard(self._MAIN_GROUP_NAME, self.channel_name)
 
     async def chat_message(self, message: dict[str, dict]):

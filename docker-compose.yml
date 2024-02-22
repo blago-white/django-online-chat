@@ -15,6 +15,7 @@ services:
         interval: 20s
         timeout: 5s
         retries: 5
+    restart: always
 
   django:
     build: .
@@ -28,6 +29,7 @@ services:
     container_name: django
     volumes:
       - ./django_chat/debug.log:/home/chat/django_chat/debug.log
+    restart: always
 
   redis:
     image: redis:7.2.4-bookworm
@@ -41,6 +43,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    restart: always
 
   nginx:
     build: ./nginx
