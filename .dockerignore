@@ -1,0 +1,11 @@
+.env
+LICENSE
+README.md
+requirements.testing.txt
+django_chat/.coverage
+
+django_chat/users/migrations
+django_chat/chat/migrations
+
+venv
+.idea

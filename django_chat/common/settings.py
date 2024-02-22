@@ -27,14 +27,13 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1:8000", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 MAIN_HOST_NAME = "127.0.0.1:8000"
 
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'chat',
     'users',
     'channels',
+    'common',
     'rest_framework',
 ]
 
@@ -76,13 +76,16 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'common.wsgi.application'
+# WSGI_APPLICATION = 'common.asgi.application'
 ASGI_APPLICATION = 'common.asgi.application'
 
 CHANNEL_LAYERS = {
-  'default': {
-    'BACKEND': 'channels.layers.InMemoryChannelLayer'
-  }
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('redis', 6379)],
+        },
+    }
 }
 
 # Database
@@ -95,7 +98,7 @@ DATABASES = {
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'PORT': os.environ.get('POSTGRES_PORT'),
-        'HOST': os.environ.get('POSTGRES_HOST') if not DEBUG else None,
+        'HOST': os.environ.get('POSTGRES_HOST'),
     }
 }
 
@@ -107,6 +110,11 @@ LOGGING = {
         }
     },
     'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'debug.log',
+        },
         'console': {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],
@@ -115,6 +123,10 @@ LOGGING = {
     },
     'loggers': {
         'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['file'],
+        },
+        'channels_redis.core.RedisChannelLayer': {
             'level': 'DEBUG',
             'handlers': ['console'],
         }

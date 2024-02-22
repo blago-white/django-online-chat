@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load static %}
 
 <html lang="en">
 <head>
@@ -175,7 +176,7 @@
     <div id="messages-section"
          class="payload-element messages-section">
         <form class="payload-element message-send-form"
-              onsubmit="sendMessage(event);return false;">
+              onsubmit="sendMessage(event, {{user.id}}, {{user.username}});return false;">
             <div class="message-input-area">
                 <textarea class="message-input" id="message-input" onchange="onInputLetter(event)" oninput="onInputLetter(event)"></textarea>
                 <span><span class="highlited-count-letters" id="count-letters">0</span> / <span class="not-highlighted">70</span></span>
@@ -194,6 +195,7 @@
 
     {% block scripts %}
     {% include 'text-input-field/text-input-field-script.html' with MAXINPUTLENGTH=20 %}
+    <script src="{% static 'js/socket.js' %}"></script>
     <script>
         addEventListener("keypress", function(e) {
             if(e.which == 13) {
@@ -202,78 +204,6 @@
         })
     </script>
     <script>
-        const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
-        const messagesSection = document.getElementById('messages')
-
-        let messagesExists = {% if messages %}true{% else %}false{% endif %};
-
-        socket.onmessage = function(event) {
-            fromServer = JSON.parse(event.data);
-            fromServerData = fromServer['payload'];
-
-            onNewMessage();
-
-            console.log(fromServerData);
-
-            if (fromServer["type"] == "create") {
-                messageHTML = getNewMessageHTML(
-                    message_id=fromServerData['message_id'],
-                    username=fromServerData['username'],
-                    text=fromServerData['message']
-                );
-                messagesSection.innerHTML += messageHTML;
-            } else if (fromServer["type"] == "delete") {
-                document.getElementById(fromServerData["message_id"]).style.display = "none";
-            }
-        };
-
-        function sendMessage(event) {
-            socket.send(JSON.stringify({
-                type: 'create',
-                payload: {
-                    userid: '{{ user.id }}',
-                    username: '{{ user.username }}',
-                    message: getMessageText()
-                }
-            }));
-        }
-
-        function deleteMessage(message_id) {
-            socket.send(JSON.stringify({
-                type: 'delete',
-                payload: {
-                    message_id: message_id,
-                }
-            }));
-        }
-
-        function onNewMessage() {
-            messagesExists = true;
-            document.getElementById('message-input').value = '';
-        }
-
-        function addMessage() {
-                messageHTML = getNewMessageHTML(
-                    message_id=fromServerData['message_id'],
-                    username=fromServerData['username'],
-                    text=fromServerData['message']
-                );
-                messagesSection.innerHTML += messageHTML;
-        }
-
-        function getNewMessageHTML(message_id, username, text) {
-            return `
-            <div id=${message_id} class="message-text">
-            <img src="https://cdn-icons-png.flaticon.com/512/151/151882.png" class="field-arrow field-arrow-static field-arrow-X" onclick="deleteMessage(${ message_id });">
-            ${username}
-            <img src="https://cdn-icons-png.flaticon.com/512/271/271226.png" class="field-arrow field-arrow-static"> ${text} </div>
-            `
-        }
-
-        function getMessageText() {
-            return document.getElementById('message-input').value
-        }
-
         function onInputLetter(event) {
             inputed = document.getElementById('message-input').value;
 
