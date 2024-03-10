@@ -176,12 +176,12 @@
     <div id="messages-section"
          class="payload-element messages-section">
         <form class="payload-element message-send-form"
-              onsubmit="sendMessage(event, {{user.id}}, {{user.username}});return false;">
+              onsubmit="return sendMessage(event, {{user.id}}, '{{user.username}}');">
             <div class="message-input-area">
                 <textarea class="message-input" id="message-input" onchange="onInputLetter(event)" oninput="onInputLetter(event)"></textarea>
                 <span><span class="highlited-count-letters" id="count-letters">0</span> / <span class="not-highlighted">70</span></span>
             </div>
-            <button class="submit-btn" id="submit-btn" onclick="">
+            <button class="submit-btn" id="submit-btn">
                 <img style="height: 70%;cursor: pointer;" src="https://cdn-icons-png.flaticon.com/512/271/271226.png">
             </button>
         </form>

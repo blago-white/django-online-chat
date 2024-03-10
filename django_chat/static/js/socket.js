@@ -32,6 +32,7 @@ function sendMessage(event, userid, username) {
             message: getMessageText()
         }
     }));
+    return false;
 }
 
 function deleteMessage(message_id) {

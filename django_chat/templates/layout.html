@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.cdnfonts.com/css/mona-sans" rel="stylesheet">
     <title>{% block pagetitle %}{% endblock %}</title>
+    <link type="text/css" rel="stylesheet" href="{% static '/css/base.css' %}">
     <style>
-        {% include 'base-styles.html' %}
         {% block customstyles %}
         {% endblock %}
     </style>

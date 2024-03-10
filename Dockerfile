@@ -13,7 +13,7 @@ WORKDIR /home/chat/
 COPY . .
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r ./requirements.txt
 
 WORKDIR /home/chat/django_chat/
 

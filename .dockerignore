@@ -3,7 +3,7 @@ LICENSE
 README.md
 requirements.testing.txt
 django_chat/.coverage
-
+django_chat/static
 django_chat/users/migrations
 django_chat/chat/migrations
 

@@ -18,22 +18,22 @@ services:
     restart: always
 
   django:
-    build: .
+    build: ..
     expose:
       - 8000
     depends_on:
       - db
       - redis
     env_file:
-      - .env
+      - ../.env
     container_name: django
     volumes:
-      - ./django_chat/:/home/chat/django_chat/
+      - ./django_chat/templates/:/home/chat/django_chat/templates/
 
   redis:
     image: redis:7.2.4-bookworm
     env_file:
-      - .env
+      - ../.env
     expose:
       - 6379
     container_name: redis
@@ -45,7 +45,7 @@ services:
     restart: always
 
   nginx:
-    build: ./nginx
+    build: ../nginx
     ports:
       - "80:80"
     container_name: nginx
