@@ -34,4 +34,3 @@ class MessagesTestCase(TestCase):
     def _add_test_message(self):
         self._test_message = models.Message(**self._test_message_properties)
         self._test_message.save()
-

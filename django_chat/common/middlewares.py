@@ -21,17 +21,12 @@ class UserLoggedInMiddleware:
         if any(request.path.startswith(stateless_url) for stateless_url in self._STATELESS_URLS):
             return self._get_response(request)
 
-        try:
-            user_authenticated: bool = request.user.is_authenticated
-        except AttributeError:
-            user_authenticated: bool = False
-
         path_is_chat_page = request.path == self._CHAT_PAGE_URL
 
-        if user_authenticated and not path_is_chat_page:
+        if request.user.is_authenticated and not path_is_chat_page:
             return HttpResponseRedirect(redirect_to=self._CHAT_PAGE_URL)
 
-        elif not user_authenticated and path_is_chat_page:
+        elif not request.user.is_authenticated and path_is_chat_page:
             return HttpResponseRedirect(redirect_to=self._AUTH_URL)
 
         return self._get_response(request)

@@ -1,11 +1,9 @@
 import json
 
 from django.contrib.auth import login
-from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic import RedirectView, FormView
-from django.core.handlers.asgi import ASGIRequest
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import render, reverse
+from django.shortcuts import reverse
 
 from . import forms
 from .services import users, urls

@@ -1,18 +1,16 @@
-from django.forms.models import model_to_dict
-
 from . import messages, _utils
 from .. import exceptions
 
 
 class MessageService:
-    async def save(self, message: dict) -> dict:
+    async def save(self, message: dict) -> dict | dict | dict:
         try:
             userid, message_text = _utils.get_message_data(
                 payload=_utils.get_user_message_payload(
                     from_client_message=message
                 )
             )
-        except:
+        except (KeyError, TypeError):
             raise exceptions.NotCorrectChatMessageFormat(message)
 
         created = await messages.async_save_message(text=message_text, from_user_id=userid)
@@ -28,7 +26,7 @@ class MessageService:
                    from_client_message=message
                 )
             )
-        except:
+        except (KeyError, TypeError):
             raise exceptions.NotCorrectChatMessageFormat(message)
 
         await messages.async_delete_message(message_id=message_id)

@@ -2,16 +2,12 @@ import asyncio
 import json
 import time
 
-from asgiref import sync
-
 from channels.testing import WebsocketCommunicator
 from django.test import TestCase
 
 from common import tests_utils
 
-from ..exceptions import NotCorrectChatMessageFormat
 from ..consumers import ChatMessageConsumer
-from ..models import Message
 
 
 class ChatConsumerTestCase(TestCase):

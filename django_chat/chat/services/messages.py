@@ -1,5 +1,5 @@
 from asgiref.sync import sync_to_async
-from django.db.models import QuerySet, Model
+from django.db.models import QuerySet
 
 from ..models import Message
 
